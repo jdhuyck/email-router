@@ -9,12 +9,94 @@ from typing import List, Dict
 import email
 from email import policy
 from app.core.config import get_settings
+import datetime
 
 
 settings = get_settings()
 
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
+
+
+class EmailContents:
+    """Represents the contents of an email."""
+
+    def __init__(  # noqa:D107
+        self,
+        subject: str,
+        sender: str,
+        body: str,
+        date: datetime.datetime,
+        snippet: str,
+    ):
+        self.subject = subject
+        self.sender = sender
+        self.body = body
+        self.date = date
+        self.snippet = snippet
+
+    def __repr__(self):  # noqa:D105
+        return f"EmailContents(subject={self.subject!r}," f"sender={self.sender!r})"
+
+    def __str__(self):  # noqa:D105
+        lines = [
+            f"Subject: {self.subject}",
+            f"From: {self.sender}",
+            "Text:",
+            self._format_body_text(),
+        ]
+
+        return "\n".join(lines)
+
+    def _format_body_text(self, max_line_length: int = 100) -> str:
+        """
+        Format body text based on inputted max line length.
+
+        Args:
+            max_line_length (int): Maximum number of characters on one line
+        """
+        if not self.body:
+            return "[No Text]"
+
+        cleaned_body_text = "\n".join(
+            line.strip() for line in self.body.splitlines() if line.strip()
+        )
+
+        wrapped = []
+        for line in cleaned_body_text.splitlines():
+            if len(line) > max_line_length:
+                wrapped.extend(
+                    line[i : i + max_line_length]  # noqa:E203
+                    for i in range(0, len(line), max_line_length)
+                )
+            else:
+                wrapped.append(line)
+
+        return "\n".join(wrapped)
+
+    def display(self, verbose: bool = False):
+        """
+        Display method with formatting options.
+
+        Args:
+            verbose: If True, shows full body with original formatting
+        """
+        print(f"\n{'='*50}")
+        print(f"Subject: {self.subject}")
+        print(f"From: {self.sender}")
+
+        print("\nBody Text")
+        print(self.body if verbose else self._format_body_text())
+
+    @property
+    def text_summary(self) -> str:
+        """Give a short summary of the email content."""
+        body_preview = (self.body[:100] + "...") if self.body else "[No body]"
+        return (
+            f"Subject: {self.subject}\n"
+            f"From: {self.sender}\n"
+            f"Preview: {body_preview}"
+        )
 
 
 class GmailService:
@@ -82,9 +164,9 @@ class GmailService:
         msg_str = base64.urlsafe_b64decode(msg["raw"].encode("ASCII"))
         mime_msg = email.message_from_bytes(msg_str, policy=policy.default)
 
-        subject = mime_msg["subject"] or "No Subject"
-        sender = mime_msg["from"] or "Unknown Sender"
-        date = mime_msg["date"] or "Unknown Date"
+        subject = mime_msg["subject"]
+        sender = mime_msg["from"]
+        date = mime_msg["date"]
 
         # Extract email body
         body = ""
@@ -96,13 +178,13 @@ class GmailService:
         else:
             body = mime_msg.get_payload(decode=True).decode()
 
-        return {
-            "subject": subject,
-            "from": sender,
-            "date": date,
-            "body": body,
-            "snippet": msg.get("snippet", ""),
-        }
+        return EmailContents(
+            subject=subject,
+            sender=sender,
+            date=date,
+            body=body,
+            snippet=msg.get("snippet", ""),
+        )
 
     def mark_as_processed(self, message_id: str):
         """Mark an email as read and add processed label."""
