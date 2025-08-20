@@ -1,4 +1,5 @@
 import pytest
+
 from app.services.classifier import ClassificationService
 
 
