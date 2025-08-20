@@ -24,12 +24,14 @@ class EmailContents:
 
     def __init__(  # noqa:D107
         self,
+        email_id: str,
         subject: str,
         sender: str,
         body: str,
         date: datetime.datetime,
         snippet: str,
     ):
+        self.email_id = email_id
         self.subject = subject
         self.sender = sender
         self.body = body
@@ -155,7 +157,7 @@ class GmailService:
                 )
 
                 email_data = self._parse_email(msg)
-                email_data["id"] = message["id"]
+                email_data.email_id = message["id"]
                 email_details.append(email_data)
 
             return email_details
@@ -164,7 +166,7 @@ class GmailService:
             print(f"An error occurred: {error}")
             return []
 
-    def _parse_email(self, msg: Dict) -> Dict:
+    def _parse_email(self, msg: Dict) -> EmailContents:
         """Parse raw email message into structured data."""
         msg_str = base64.urlsafe_b64decode(msg["raw"].encode("ASCII"))
         mime_msg = email.message_from_bytes(msg_str, policy=policy.default)
@@ -184,6 +186,7 @@ class GmailService:
             body = mime_msg.get_payload(decode=True).decode()
 
         return EmailContents(
+            email_id=msg["id"],
             subject=subject,
             sender=sender,
             date=date,
