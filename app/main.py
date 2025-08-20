@@ -8,6 +8,7 @@ from app.services.email_processor import email_processor
 
 settings = get_settings()
 
+
 async def email_polling_task():
     """Background task to periodically check for new emails."""
     while True:
@@ -17,8 +18,9 @@ async def email_polling_task():
             print(f"Error in email polling task: {e}")
         await asyncio.sleep(settings.gmail_poll_interval)
 
+
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI):  # noqa:D103
     # Startup: Start background task
     polling_task = asyncio.create_task(email_polling_task())
     yield
@@ -29,10 +31,8 @@ async def lifespan(app: FastAPI):
     except asyncio.CancelledError:
         pass
 
-app = FastAPI(
-    title=settings.app_name,
-    lifespan=lifespan
-)
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.include_router(api_router, prefix="/api/v1")
 
