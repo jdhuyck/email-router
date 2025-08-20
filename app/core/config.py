@@ -12,10 +12,10 @@ class Settings(BaseSettings):
 
     # Gmail API Configuration
     gmail_credentials_path: str = Field(
-        "credentials.json", description="Path to Gmail OAuth credentials"
+        "../../scripts/credentials.json", description="Path to Gmail OAuth credentials"
     )
     gmail_token_path: str = Field(
-        "token.json", description="Path to store Gmail OAuth token"
+        "../../scripts/token.json", description="Path to store Gmail OAuth token"
     )
     gmail_poll_interval: int = Field(
         300, description="Email polling interval in seconds"

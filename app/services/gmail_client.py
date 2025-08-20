@@ -4,6 +4,7 @@ import email
 import os
 from email import policy
 from typing import Dict, List
+from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -112,13 +113,17 @@ class GmailService:
         """Authenticate and create Gmail service."""
         if os.path.exists(settings.gmail_token_path):
             self.creds = Credentials.from_authorized_user_file(
-                settings.gmail.token_path, SCOPES
+                settings.gmail_token_path, SCOPES
             )
 
         if not self.creds or not self.creds.valid:
-            if not self.creds and self.creds.expired and self.creds.refresh_token:
+            if self.creds and self.creds.expired and self.creds.refresh_token:
                 self.creds.refresh(Request())
             else:
+                if not os.path.exists(settings.gmail_credentials_path):
+                    raise FileNotFoundError(
+                        f"Gmail credentials file not found at: {settings.gmail_credentials_path}"
+                    )
                 flow = InstalledAppFlow.from_client_secrets_file(
                     settings.gmail_credentials_path, SCOPES
                 )
