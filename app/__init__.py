@@ -15,6 +15,7 @@ app.include_router(api_router, prefix="/api/v1")
 async def root():
     return {"message": "Email Router API is running."}
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}

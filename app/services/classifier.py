@@ -9,11 +9,10 @@ class ClassificationService:
     """Service for handling email text classification."""
 
     def __init__(self):
-        # Initialize the zero-shot classification pipeline
+        """Initialize the zero-shot classification pipeline."""
         # Downloads model on first run
         self.classifier = pipeline(
-            "zero-shot-classification",
-            model=settings.model_name
+            "zero-shot-classification", model=settings.model_name
         )
         # Define the candidate labels for routing
         self.candidate_labels = [
@@ -21,7 +20,7 @@ class ClassificationService:
             "sales inquiry",
             "billing issue",
             "complaint",
-            "feedback"
+            "feedback",
         ]
 
     async def classify_email(self, email_text: str) -> dict:
@@ -42,9 +41,7 @@ class ClassificationService:
             raise ValueError("Email text cannot be empty.")
 
         result = self.classifier(
-            email_text,
-            candidate_labels=self.candidate_labels,
-            multi_label=False
+            email_text, candidate_labels=self.candidate_labels, multi_label=False
         )
         return result
 
