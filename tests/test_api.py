@@ -11,7 +11,9 @@ class TestAPIEndpoints:
     @pytest_asyncio.fixture
     async def client(self):
         """Fixture to create an AsyncClient for testing the app."""
-        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as test_client:
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://testserver"
+        ) as test_client:  # noqa:E501
             yield test_client
 
     async def test_root_endpoint(self, client):
@@ -30,7 +32,9 @@ class TestAPIEndpoints:
 
     async def test_classify_endpoint_valid_request(self, client):
         """Test the classify endpoint with a valid request."""
-        payload = {"email_text": "I can't log into my account, please help reset my password."}
+        payload = {
+            "email_text": "I can't log into my account, please help reset my password."
+        }  # noqa:E501
 
         response = await client.post("/api/v1/classify", json=payload)
 

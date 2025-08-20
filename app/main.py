@@ -12,10 +12,10 @@ app.include_router(api_router, prefix="/api/v1")
 
 # Health check endpoint
 @app.get("/")
-async def root():
+async def root():  # noqa:D103
     return {"message": "Email Router API is running."}
 
 
 @app.get("/health")
-async def health_check():
+async def health_check():  # noqa:D103
     return {"status": "healthy"}
