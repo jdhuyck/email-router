@@ -4,7 +4,6 @@ import email
 import os
 from email import policy
 from typing import Dict, List
-from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -122,7 +121,7 @@ class GmailService:
             else:
                 if not os.path.exists(settings.gmail_credentials_path):
                     raise FileNotFoundError(
-                        f"Gmail credentials file not found at: {settings.gmail_credentials_path}"
+                        f"Gmail credentials file not found at: {settings.gmail_credentials_path}"  # noqa:E501
                     )
                 flow = InstalledAppFlow.from_client_secrets_file(
                     settings.gmail_credentials_path, SCOPES
