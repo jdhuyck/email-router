@@ -1,7 +1,8 @@
-import httpx
-from app.core.config import get_settings
 from typing import Optional
 
+import httpx
+
+from app.core.config import get_settings
 
 settings = get_settings()
 

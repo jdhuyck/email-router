@@ -1,9 +1,9 @@
 import asyncio
-from app.services.gmail_client import gmail_service, EmailContents
-from app.services.classifier import classification_service
-from app.services.slack_notifier import slack_notifier
-from app.core.config import get_settings
 
+from app.core.config import get_settings
+from app.services.classifier import classification_service
+from app.services.gmail_client import EmailContents, gmail_service
+from app.services.slack_notifier import slack_notifier
 
 settings = get_settings
 

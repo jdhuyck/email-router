@@ -1,16 +1,17 @@
-import os
 import base64
+import datetime
+import email
+import os
+from email import policy
+from typing import Dict, List
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from typing import List, Dict
-import email
-from email import policy
-from app.core.config import get_settings
-import datetime
 
+from app.core.config import get_settings
 
 settings = get_settings()
 
